@@ -68,7 +68,7 @@ function App() {
       },
       title: {
         display: true,
-        text: chartData?.title || 'Hello world!',
+        text: chartData?.title || 'Hello my app! ',
         font: {
           size: 20
         }
@@ -86,7 +86,7 @@ function App() {
         display: true,
         title: {
           display: true,
-          text: chartData?.y_title || 'Fun with data'
+          text: chartData?.y_title || 'Fun with data 0920'
         }
       }
     }
