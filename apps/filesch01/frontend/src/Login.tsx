@@ -6,10 +6,21 @@ const validatePassword = (username: string, password: string) => {
   return password === expected
 }
 
+function Popup({ message, onClose }: { message: string; onClose: () => void }) {
+  return (
+    <div className="popup-overlay" onClick={onClose}>
+      <div className="popup-box" onClick={(e) => e.stopPropagation()}>
+        <p>{message}</p>
+        <button onClick={onClose}>OK</button>
+      </div>
+    </div>
+  )
+}
+
 function Login() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
+  const [showPopup, setShowPopup] = useState(false)
   const navigate = useNavigate()
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -18,7 +29,7 @@ function Login() {
       sessionStorage.setItem('authenticated', 'true')
       navigate('/')
     } else {
-      setError('Invalid credentials')
+      setShowPopup(true)
     }
   }
 
@@ -47,10 +58,15 @@ function Login() {
               placeholder="Enter password"
             />
           </div>
-          {error && <p className="error">{error}</p>}
           <button type="submit">Login</button>
         </form>
       </div>
+      {showPopup && (
+        <Popup
+          message="Wrong password"
+          onClose={() => setShowPopup(false)}
+        />
+      )}
     </div>
   )
 }
