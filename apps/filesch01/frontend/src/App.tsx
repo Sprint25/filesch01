@@ -10,6 +10,8 @@ import {
   Legend,
 } from 'chart.js'
 import { Scatter } from 'react-chartjs-2'
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom'
+import Login from './Login'
 import './App.css'
 
 ChartJS.register(
@@ -38,13 +40,12 @@ interface ChartData {
   y_title: string
 }
 
-function App() {
+function Home() {
   const [apiData, setApiData] = useState<ApiResponse | null>(null)
   const [chartData, setChartData] = useState<ChartData | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Fetch both hello message and chart data
     Promise.all([
       fetch('/api/hello').then(response => response.json()),
       fetch('/api/data').then(response => response.json())
@@ -107,7 +108,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <h1>🚀 Node.js + FastAPI Hello World</h1>
-        
+
         {loading ? (
           <p>Loading...</p>
         ) : (
@@ -119,7 +120,7 @@ function App() {
             ) : (
               <p>Failed to connect to API</p>
             )}
-            
+
             {chartData && (
               <div className="chart-container">
                 <Scatter data={scatterData} options={chartOptions} />
@@ -132,4 +133,23 @@ function App() {
   )
 }
 
-export default App 
+function ProtectedRoute({ children }: { children: JSX.Element }) {
+  const loggedIn = sessionStorage.getItem('authenticated') === 'true'
+  if (!loggedIn) return <Navigate to="/login" replace />
+  return children
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/" element={
+          <ProtectedRoute><Home /></ProtectedRoute>
+        } />
+      </Routes>
+    </BrowserRouter>
+  )
+}
+
+export default App
